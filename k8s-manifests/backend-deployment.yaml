@@ -1,0 +1,35 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: feedback-backend
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: feedback-backend
+  template:
+    metadata:
+      labels:
+        app: feedback-backend
+    spec:
+      containers:
+        - name: backend
+          image: christopherian2004/feedback-backend:v1
+          ports:
+            - containerPort: 5001
+          env:
+            - name: MONGO_URI
+              value: mongodb://mongo-service:27017/feedback
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: backend-service
+spec:
+  selector:
+    app: feedback-backend
+  ports:
+    - port: 5001
+      targetPort: 5001
+      nodePort: 30501
+  type: NodePort
